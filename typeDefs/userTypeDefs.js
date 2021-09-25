@@ -1,12 +1,23 @@
 module.exports = `
   type User {
-    token: String
-    email: String
-    name: String
     id: String
+    nickname: String
+    firstName: String
+    lastName: String
+    email: String
+    googleId: String
+    facebookId: String
+    token: String
+  }
+  type AuthPayload {
+    user: User
+  }
+  type Query {
+    getUser(id: ID!): AuthPayload
   }
   type Mutation {
-    register(name: String, password: String, email: String): User 
-    login(name: String, password: String): User
+    login(email: String! password: String!): AuthPayload
+    signInWithGoogle(accessToken: String!): AuthPayload
+    register(nickname: String! email: String! password: String! googleId: String firstName: String lastName: String): AuthPayload
   }
 `;
