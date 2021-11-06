@@ -1,14 +1,16 @@
+const { createServer } = require('http');
+const { execute, subscribe } = require('graphql');
+const { SubscriptionServer } = require('subscriptions-transport-ws');
+const { makeExecutableSchema } = require('@graphql-tools/schema');
 const express = require('express');
-const https = require('https');
-const fs = require('fs');
-const { ApolloServer } = require('apollo-server-express');
+const { ApolloServer, gql  } = require('apollo-server-express');
 const mongoose = require('mongoose');
 const { verifyToken } = require('./helpers/getJWTToken');
 const typeDefs = require('./typeDefs');
 const resolvers = require('./resolvers');
 
 const startApolloServer = async () => {
-  const db = `mongodb+srv://tubloko:eJiWCvx0uPZHJWuS@cluster0.tqfrv.mongodb.net/lmab?retryWrites=true&w=majority`;
+  const db = `mongodb+srv://tubloko:cq8cmycab8WjB3jM@cluster0.tqfrv.mongodb.net/lmab?retryWrites=true&w=majority`;
   try {
     await mongoose.connect(db);
     console.log('MongoDB connected');
@@ -16,32 +18,40 @@ const startApolloServer = async () => {
     console.log(error.message);
     process.exit(1);
   }
-  const server = new ApolloServer({
+
+  const app = express();
+  const httpServer = createServer(app);
+
+  const schema = makeExecutableSchema({
     typeDefs,
     resolvers,
-    context: ({ req }) => {
-      const token = req.headers.authorization || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxNGYyYjlhZDQ4NmM3NDY0ZjdkNTM2NiIsIm5pY2tuYW1lIjoiUnVzbGFuIFNodWtpdXJvdiIsImlhdCI6MTYzMjU3OTgxNywiZXhwIjoxNjMyNjE1ODE3fQ.sxJSFCP6qSjPimSo0Hg5XViptcddpxoo33_sQCPQb8Q';
+  });
+
+  const server = new ApolloServer({
+    schema,
+    context: ({ req, res }) => {
+      const token = req.headers.authorization?.split(' ')[1] || '';
       const { id } = verifyToken(token);
 
-      return { loggedIn: Boolean(id) };
+      return { loggedIn: Boolean(id), token };
     },
   });
   await server.start();
-
-  const app = express();
-
   server.applyMiddleware({ app });
 
-  const options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
-  };
+  SubscriptionServer.create(
+    { schema, execute, subscribe },
+    { server: httpServer, path: server.graphqlPath }
+  );
 
-  const httpsServer = https.createServer(options, app);
-  await new Promise(resolve => {
-    return httpsServer.listen({ port: 4000 }, resolve)
+  const PORT = 4000;
+  httpServer.listen(PORT, () => {
+    console.log(
+      `🚀 Query endpoint ready at http://localhost:${PORT}${server.graphqlPath}`
+    );
+    console.log(
+      `🚀 Subscription endpoint ready at ws://localhost:${PORT}${server.graphqlPath}`
+    );
   });
-  console.log(`🚀 Server ready at https://localhost:4000${server.graphqlPath}`);
-  return { server, app };
 };
 startApolloServer();

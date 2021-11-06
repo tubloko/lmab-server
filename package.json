@@ -5,13 +5,14 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "set HTTPS=true&&nodemon index.js"
+    "start": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@graphql-tools/merge": "^6.2.10",
+    "@graphql-tools/schema": "^8.3.1",
     "@vonage/server-sdk": "^2.10.10",
     "apollo-server": "^2.21.0",
     "apollo-server-errors": "^2.4.2",
@@ -19,6 +20,7 @@
     "express": "^4.17.1",
     "graphql": "^15.5.0",
     "graphql-passport": "^0.6.3",
+    "graphql-subscriptions": "^2.0.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.21",
     "mongoose": "^6.0.7",
@@ -26,6 +28,7 @@
     "passport": "^0.4.1",
     "passport-facebook": "^3.0.0",
     "passport-google-oauth20": "^2.0.0",
+    "subscriptions-transport-ws": "^0.11.0",
     "textmagic-rest-client": "^1.0.11"
   },
   "devDependencies": {

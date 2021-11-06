@@ -10,7 +10,7 @@ module.exports = {
       }
       const { _id, email, nickname, firstName, lastName } = await getUser({ id });
 
-      return { user: { id: _id, email, nickname, firstName, lastName } };
+      return { user: { id: _id, email, nickname, firstName, lastName, token: context.token } };
     }
   },
   Mutation: {
