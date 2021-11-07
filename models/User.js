@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema(
     nickname: String,
     firstName: String,
     lastName: String,
+    challengeRoomsIds: [String],
     email: {
       type: String,
       unique: true,

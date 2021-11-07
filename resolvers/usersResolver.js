@@ -1,6 +1,6 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { loginUser, registerUser, getUserByGoogleToken } = require('./../managers/authManager');
-const { getUser } = require('./../managers/userManager');
+const { getUser, onUserSubscribe } = require('./../managers/userManager');
 
 module.exports = {
   Query: {
@@ -33,6 +33,11 @@ module.exports = {
     register: async (parent, { nickname, firstName, lastName, email, password, googleId, facebookId }) => {
       const user = await registerUser({ nickname, firstName, lastName, email, password, googleId, facebookId });
       return { user: { ...user, id: user._id } };
+    },
+    onSubscribe: async (parent, { id, challengeRoomIds, challengeRoomId }) => {
+      const user = await onUserSubscribe({ id, challengeRoomIds, challengeRoomId });
+
+      return { user: { ...user } };
     },
   },
 };
