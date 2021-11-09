@@ -1,4 +1,11 @@
 module.exports = `
+  type PublicUser {
+    id: String
+    nickname: String
+    firstName: String
+    lastName: String
+    email: String
+  }
   type User {
     id: String
     nickname: String
@@ -15,6 +22,7 @@ module.exports = `
   }
   type Query {
     getUser(id: ID!): AuthPayload
+    getListUsers: [PublicUser]
   }
   type Mutation {
     login(email: String! password: String!): AuthPayload

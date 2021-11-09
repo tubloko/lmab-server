@@ -2,6 +2,7 @@ const User = require('../models/User');
 const { UserInputError } = require('apollo-server-express');
 
 const getUser = async ({ id }) => User.findById(id);
+const getListUsers = async () => User.find();
 
 const onUserSubscribe = async ({ id, challengeRoomIds, challengeRoomId }) => {
   if (!id || !challengeRoomId) {
@@ -19,6 +20,7 @@ const onUserSubscribe = async ({ id, challengeRoomIds, challengeRoomId }) => {
 
 module.exports = {
   getUser,
+  getListUsers,
   onUserSubscribe,
 };
 //617e78db9dc234df0c552ac3

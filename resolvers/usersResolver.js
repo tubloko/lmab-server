@@ -1,6 +1,6 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { loginUser, registerUser, getUserByGoogleToken } = require('./../managers/authManager');
-const { getUser, onUserSubscribe } = require('./../managers/userManager');
+const { getUser, onUserSubscribe, getListUsers } = require('./../managers/userManager');
 
 module.exports = {
   Query: {
@@ -11,6 +11,16 @@ module.exports = {
       const { _id, email, nickname, firstName, lastName } = await getUser({ id });
 
       return { user: { id: _id, email, nickname, firstName, lastName, token: context.token } };
+    },
+    getListUsers: async (parent, _, context) => {
+      if (!context.loggedIn) {
+        throw new AuthenticationError('You must be logged in');
+      }
+      const listUsers = await getListUsers();
+
+      return listUsers.map(({ _id, email, nickname, firstName, lastName }) => {
+        return { id: _id, email, nickname, firstName, lastName, token: context.token };
+      });
     }
   },
   Mutation: {
