@@ -1,34 +1,23 @@
+const challengeRoomManager = require("../managers/challengeManager");
+
 const pubsub = require('../pubsub');
 const CHAT_CHANNEL = 'CHAT_CHANNEL';
-let chats = [
-  { id: 1, from: 'admin', content: 'testing 1', createdAt: '' },
-  { id: 2, from: 'admin', content: 'testing 2', createdAt: '' },
-  { id: 3, from: 'admin', content: 'testing 3', createdAt: '' },
-  { id: 4, from: 'admin', content: 'testing 4', createdAt: '' }
-];
+
 module.exports =  {
   Query: {
-    chats: (root, args, context) => chats
+    listChallengeRooms: async (root, args, context) => challengeRoomManager.getListChallengeRooms(),
+    challengeRoom: async (root, { id }, context) => challengeRoomManager.getChallengeRoom(id),
   },
 
   Mutation: {
-    createChat: (root, { content, from }, context) => {
-      const id =
-        '_' +
-        Math.random()
-          .toString(36)
-          .substr(2, 9);
-      const chat = {
-        id,
-        content,
-        from,
-        createdAt: new Date().toISOString()
-      };
-      chats = [chat, ...chats];
-      chats = chats.splice(0, 8);
-      pubsub.publish(CHAT_CHANNEL, { messageSent: chat });
+    createChallengeRoom: async (root, { title, description, author, userId }, context) => {
+      return challengeRoomManager.createChallengeRoom({ title, description, author, userId });
+    },
+    updateChallengeRoom: async (root, { id, userId, from, message }, context) => {
+      const sentMessage = await challengeRoomManager.updateChallengeRoom({ id, userId, from, message });
+      await pubsub.publish(CHAT_CHANNEL, { messageSent: sentMessage });
 
-      return chat;
+      return sentMessage;
     }
   },
 

@@ -1,18 +1,32 @@
 module.exports = `
-  type Chat {
-    id: ID!
-    content: String!
+  input InputMessage {
+    userId: String!
     from: String!
-    createdAt: String!
+    message: String!
+  }
+  type Message {
+    id: ID!
+    userId: String!
+    from: String!
+    message: String!
+  }
+  type ChallengeRoom {
+    id: ID!
+    description: String!
+    title: String!
+    author: String!
+    userId: String!
+    messages: [Message]
   }
   type Query {
-    chats: [Chat]
+    listChallengeRooms: [ChallengeRoom]
+    challengeRoom(id: ID!): ChallengeRoom
   }
   type Mutation {
-    createChat(content: String!, from: String!) : Chat
+    createChallengeRoom(title: String! description: String! author: String! userId: String!): ChallengeRoom
+    updateChallengeRoom(id: ID! message: InputMessage!): ChallengeRoom
   }
-  
   type Subscription {
-    messageSent: Chat
+    messageSent: ChallengeRoom
   }
 `;
