@@ -8,9 +8,9 @@ module.exports = {
       if (!context.loggedIn) {
         throw new AuthenticationError('You must be logged in');
       }
-      const { _id, email, nickname, firstName, lastName } = await getUser({ id });
+      const { _id, email, nickname, firstName, lastName, challengeRoomsIds } = await getUser({ id });
 
-      return { user: { id: _id, email, nickname, firstName, lastName, token: context.token } };
+      return { user: { id: _id, email, nickname, firstName, lastName, token: context.token, challengeRoomsIds } };
     },
     getListUsers: async (parent, _, context) => {
       if (!context.loggedIn) {
