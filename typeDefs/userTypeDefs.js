@@ -5,6 +5,7 @@ module.exports = `
     firstName: String
     lastName: String
     email: String
+    challengeRoomsIds: [String]
   }
   type User {
     id: String
