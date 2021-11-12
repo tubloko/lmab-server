@@ -22,13 +22,17 @@ module.exports = `
     user: User
   }
   type Query {
-    getUser(id: ID!): AuthPayload
+    getUser: AuthPayload
     getListUsers: [PublicUser]
+  }
+  type Logout {
+    success: Boolean
   }
   type Mutation {
     login(email: String! password: String!): AuthPayload
     signInWithGoogle(accessToken: String!): AuthPayload
     register(nickname: String! email: String! password: String! googleId: String firstName: String lastName: String): AuthPayload
     onSubscribe(id: ID! challengeRoomIds: [String] challengeRoomId: String!): AuthPayload
+    logout: Logout
   }
 `;

@@ -8,6 +8,7 @@ const mongoose = require('mongoose');
 const { verifyToken } = require('./helpers/getJWTToken');
 const typeDefs = require('./typeDefs');
 const resolvers = require('./resolvers');
+const cookie = require('cookie');
 
 const startApolloServer = async () => {
   const db = `mongodb+srv://tubloko:cq8cmycab8WjB3jM@cluster0.tqfrv.mongodb.net/lmab?retryWrites=true&w=majority`;
@@ -26,18 +27,29 @@ const startApolloServer = async () => {
     typeDefs,
     resolvers,
   });
-
   const server = new ApolloServer({
     schema,
     context: ({ req, res }) => {
-      const token = req.headers.authorization?.split(' ')[1] || '';
-      const { id } = verifyToken(token);
+      const parsedCookie = cookie.parse(req.headers.cookie);
+      try {
+        let token = '';
+        if (parsedCookie.user) {
+          token = JSON.parse(parsedCookie.user).token;
+        }
+        const { id } = verifyToken(token);
 
-      return { loggedIn: Boolean(id), token };
+        return { loggedIn: Boolean(id), token, userId: id, res };
+      } catch (e) {
+        return { error: 'OooOps...something went wrong with the user!', res };
+      }
     },
   });
   await server.start();
-  server.applyMiddleware({ app });
+  const corsOptions = {
+    origin: 'http://localhost:3000',
+    credentials: true
+  }
+  server.applyMiddleware({ app, cors: corsOptions });
 
   SubscriptionServer.create(
     {
