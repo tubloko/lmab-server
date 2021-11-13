@@ -1,53 +1,39 @@
 const { UserInputError } = require('apollo-server-express');
+const Challenge = require('../models/Challenge');
 
-let challengeRooms = [
-  { id: 'testId1', title: 'first challenge', description: 'first challenge description', author: 'me', userId: '123',
-    messages: [
-      {
-        id: 'ID!1',
-        userId: 'String!',
-        author: 'String!',
-        message: 'String!',
-      },
-    ],
-  },
-  { id: 'testId2', title: 'second challenge', description: 'second challenge description', author: 'someone', userId: '123',
-    messages: [
-      {
-        id: 'ID!2',
-        userId: 'String!',
-        author: 'String!',
-        message: 'String!',
-      },
-    ],
-  },
-];
-
-const getListChallengeRooms = async () => challengeRooms;
-const getChallengeRoom = async (id) => challengeRooms.find(item => item.id === id);
+const getListChallengeRooms = async () => Challenge.find();
+const getChallengeRoom = async (id) => Challenge.findById(id);
 
 const createChallengeRoom = async ({ userId, title, description, author }) => {
   if (!userId || !title || !description || !author) {
     throw new UserInputError('Invalid data!');
   }
-  challengeRooms = [ ...challengeRooms, { id: "123", userId, title, description, author, messages: [] } ];
+  let challenge;
+  try {
+    challenge = await Challenge.create({ userId, title, description, author, messages: [] });
+  } catch (e) {
+    throw new UserInputError(e.message);
+  }
 
-  return { id: "123", userId, title, description, author };
+  return { ...challenge._doc };
 }
 
 const updateChallengeRoom = async ({ message: { userId, from, message }, id }) => {
   if (!userId || !from || !message || !id) {
     throw new UserInputError('Invalid data!');
   }
+  let currentChallenge;
+  let updatedChallengeRoomResponse;
+  let messages;
+  try {
+    currentChallenge = await getChallengeRoom(id);
+    messages = [ ...currentChallenge._doc.messages, { userId, from, message } ];
+    updatedChallengeRoomResponse = await Challenge.findOneAndUpdate({ _id: id }, { messages }, { new: true });
+  } catch (e) {
+    throw new Error(`something went wrong ${e.message}`);
+  }
 
-  challengeRooms = challengeRooms.map(item => {
-    if (item.id === id) {
-      return { ...item, messages: [ ...item.messages, { id: "messageId", userId, from, message } ] }
-    }
-    return item;
-  });
-
-  return challengeRooms.find(item => item.id === id);
+  return updatedChallengeRoomResponse;
 }
 
 module.exports = {

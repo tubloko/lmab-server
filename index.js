@@ -30,15 +30,19 @@ const startApolloServer = async () => {
   const server = new ApolloServer({
     schema,
     context: ({ req, res }) => {
-      const parsedCookie = cookie.parse(req.headers.cookie);
       try {
+        const parsedCookie = cookie.parse(req?.headers?.cookie);
         let token = '';
-        if (parsedCookie.user) {
+        if (parsedCookie?.user) {
           token = JSON.parse(parsedCookie.user).token;
         }
-        const { id } = verifyToken(token);
+        const result = verifyToken(token);
 
-        return { loggedIn: Boolean(id), token, userId: id, res };
+        if (result.message === 'jwt expired') {
+          res.clearCookie('user');
+        }
+
+        return { loggedIn: Boolean(result.id), token, userId: result.id, res };
       } catch (e) {
         return { error: 'OooOps...something went wrong with the user!', res };
       }

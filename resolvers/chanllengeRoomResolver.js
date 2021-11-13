@@ -11,13 +11,16 @@ module.exports =  {
 
   Mutation: {
     createChallengeRoom: async (root, { title, description, author, userId }, context) => {
-      return challengeRoomManager.createChallengeRoom({ title, description, author, userId });
-    },
-    updateChallengeRoom: async (root, { id, userId, from, message }, context) => {
-      const sentMessage = await challengeRoomManager.updateChallengeRoom({ id, userId, from, message });
-      await pubsub.publish(CHAT_CHANNEL, { messageSent: sentMessage });
+      const res = await challengeRoomManager.createChallengeRoom({ title, description, author, userId });
 
-      return sentMessage;
+      return { ...res, id: res._id };
+    },
+    sendMessage: async (root, { id, userId, from, message }, context) => {
+      const result = await challengeRoomManager.updateChallengeRoom({ id, userId, from, message });
+      const messages = result.messages.map(({ _id, userId, from, message }) => ({ id: _id, userId, from, message }));
+      await pubsub.publish(CHAT_CHANNEL, { messageSent: { ...result._doc, id, messages } });
+
+      return { ...result._doc, id, messages };
     }
   },
 

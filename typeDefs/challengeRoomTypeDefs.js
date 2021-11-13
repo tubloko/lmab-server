@@ -24,7 +24,7 @@ module.exports = `
   }
   type Mutation {
     createChallengeRoom(title: String! description: String! author: String! userId: String!): ChallengeRoom
-    updateChallengeRoom(id: ID! message: InputMessage!): ChallengeRoom
+    sendMessage(id: ID! message: InputMessage!): ChallengeRoom
   }
   type Subscription {
     messageSent: ChallengeRoom

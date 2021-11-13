@@ -10,7 +10,8 @@ const onUserSubscribe = async ({ id, challengeRoomIds, challengeRoomId }) => {
   }
 
   try {
-    await User.findOneAndUpdate({ _id: id }, { challengeRoomsIds: [ ...challengeRoomIds, challengeRoomId ] });
+    const challengeRoomsIds = [ ...challengeRoomIds, challengeRoomId ];
+    await User.findOneAndUpdate({ _id: id }, { challengeRoomsIds });
   } catch (e) {
     throw new Error(`Something went wrong...${e.message}`);
   }
