@@ -9,11 +9,11 @@ const { verifyToken } = require('./helpers/getJWTToken');
 const typeDefs = require('./typeDefs');
 const resolvers = require('./resolvers');
 const cookie = require('cookie');
+const config = require('config');
 
 const startApolloServer = async () => {
-  const db = `mongodb+srv://tubloko:cq8cmycab8WjB3jM@cluster0.tqfrv.mongodb.net/lmab?retryWrites=true&w=majority`;
   try {
-    await mongoose.connect(db);
+    await mongoose.connect(config.get('DB').url);
     console.log('MongoDB connected');
   } catch (error) {
     console.log(error.message);
@@ -50,7 +50,7 @@ const startApolloServer = async () => {
   });
   await server.start();
   const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: config.get('client').clientURL,
     credentials: true
   }
   server.applyMiddleware({ app, cors: corsOptions });
@@ -64,13 +64,13 @@ const startApolloServer = async () => {
     { server: httpServer, path: server.graphqlPath }
   );
 
-  const PORT = process.env.PORT || "4000";
+  const PORT = process.env.PORT || config.get('port');
   httpServer.listen(PORT, () => {
     console.log(
-      `🚀 Query endpoint ready at http://localhost:${PORT}${server.graphqlPath}`
+      `🚀 Query endpoint ready at ${PORT}${server.graphqlPath}`
     );
     console.log(
-      `🚀 Subscription endpoint ready at ws://localhost:${PORT}${server.graphqlPath}`
+      `🚀 Subscription endpoint ready at ${PORT}${server.graphqlPath}`
     );
   });
 };
