@@ -3,7 +3,7 @@ module.exports = {
   DB: {
     url: process.env.DB,
   },
-  Security: {
+  security: {
     jwtSecret: process.env.SECRET_KEY,
   },
   client: {
