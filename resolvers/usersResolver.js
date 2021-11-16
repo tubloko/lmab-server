@@ -30,7 +30,7 @@ module.exports = {
       res.setHeader(
         'Set-Cookie',
         cookie.serialize('user', JSON.stringify({ token: user.token, id: user.id, nickname: user.nickname })),
-        { httpOnly: true, maxAge: 60 * 60 * 24 * 7 }
+        { httpOnly: true, maxAge: 60 * 60 * 24 * 7, sameSite: 'none', }
       );
 
       return { user };
