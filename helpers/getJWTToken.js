@@ -4,12 +4,12 @@ const config = require('config');
 module.exports = {
   getJWTToken: ({ id, nickname }) => jwt.sign(
     { id, nickname },
-    config.get('jwtSecret'),
+    config.get('security').jwtSecret,
     { expiresIn: '10h' },
   ),
   verifyToken: (token) => {
     try {
-      return jwt.verify(token, config.get('jwtSecret'));
+      return jwt.verify(token, config.get('security').jwtSecret);
     } catch (e) {
       return { message: e.message }
     }
