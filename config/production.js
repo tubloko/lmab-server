@@ -6,6 +6,6 @@ module.exports = {
     jwtSecret: process.env.SECRET_KEY,
   },
   client: {
-    clientURL: process.env.CLIENT_URL_PROD
+    clientURL: 'http://localhost:3000'
   }
 }
