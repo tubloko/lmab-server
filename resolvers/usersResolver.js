@@ -29,8 +29,10 @@ module.exports = {
       const user = await loginUser({ email, password });
       res.setHeader(
         'Set-Cookie',
-        `${cookie.serialize('user', JSON.stringify({ token: user.token, id: user.id, nickname: user.nickname }))}; SameSite=None; Secure`,
-        { httpOnly: true, maxAge: 60 * 60 * 24 * 7 }
+        `${cookie.serialize(
+          'user', 
+          JSON.stringify({ token: user.token, id: user.id, nickname: user.nickname }))}; SameSite=None; Secure`,
+        { httpOnly: false, maxAge: 60 * 60 * 24 * 7 }
       );
 
       return { user };
@@ -51,8 +53,10 @@ module.exports = {
       const user = await registerUser({ nickname, firstName, lastName, email, password, googleId, facebookId });
       res.setHeader(
         'Set-Cookie',
-        cookie.serialize('user', JSON.stringify({ token: user.token, id: user.id, nickname: user.nickname })),
-        { httpOnly: true, maxAge: 60 * 60 * 24 * 7 }
+        `${cookie.serialize(
+          'user',
+          JSON.stringify({ token: user.token, id: user.id, nickname: user.nickname }))}; SameSite=None; Secure`,
+        { httpOnly: false, maxAge: 60 * 60 * 24 * 7 }
       );
 
       return { user: { ...user, id: user._id } };
