@@ -29,10 +29,9 @@ module.exports = {
       const user = await loginUser({ email, password });
       res.setHeader(
         'Set-Cookie',
-        cookie.serialize('user', JSON.stringify({ token: user.token, id: user.id, nickname: user.nickname })),
+        `${cookie.serialize('user', JSON.stringify({ token: user.token, id: user.id, nickname: user.nickname }))}; SameSite=None; Secure`,
         { httpOnly: true, maxAge: 60 * 60 * 24 * 7 }
       );
-      res.setHeader('SameSite', 'None');
 
       return { user };
     },
