@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { createServer } = require('http');
 const { execute, subscribe } = require('graphql');
 const { SubscriptionServer } = require('subscriptions-transport-ws');
@@ -16,6 +17,7 @@ const startApolloServer = async () => {
     await mongoose.connect(config.get('DB').url);
     console.log('MongoDB connected');
   } catch (error) {
+    console.log(error);
     console.log(error.message);
     process.exit(1);
   }

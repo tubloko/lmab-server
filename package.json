@@ -20,6 +20,7 @@
     "apollo-server-express": "^2.25.2",
     "config": "^3.3.6",
     "cookie": "^0.4.1",
+    "dotenv": "^16.0.0",
     "express": "^4.17.1",
     "graphql": "^15.5.0",
     "graphql-passport": "^0.6.3",
