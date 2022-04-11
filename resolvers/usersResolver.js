@@ -33,11 +33,9 @@ module.exports = {
       const user = await getUserByGoogleToken(accessToken);
       return {
         user: {
+          name: user.name,
           email: user.email,
           googleId: user.sub,
-          nickname: user.name,
-          firstName: user.given_name,
-          lastName: user.family_name,
         }
       };
     },
