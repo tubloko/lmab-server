@@ -1,16 +1,15 @@
 require('dotenv').config();
 const { createServer } = require('http');
+const express = require('express');
+const mongoose = require('mongoose');
+const config = require('config');
 const { execute, subscribe } = require('graphql');
 const { SubscriptionServer } = require('subscriptions-transport-ws');
 const { makeExecutableSchema } = require('@graphql-tools/schema');
-const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
-const mongoose = require('mongoose');
 const { verifyToken } = require('./helpers/getJWTToken');
 const typeDefs = require('./typeDefs');
 const resolvers = require('./resolvers');
-const cookie = require('cookie');
-const config = require('config');
 
 const startApolloServer = async () => {
   try {
@@ -31,23 +30,10 @@ const startApolloServer = async () => {
   });
   const server = new ApolloServer({
     schema,
-    context: ({ req, res }) => {
-      try {
-        const parsedCookie = cookie.parse(req?.headers?.cookie);
-        let token = '';
-        if (parsedCookie?.user) {
-          token = JSON.parse(parsedCookie.user).token;
-        }
-        const result = verifyToken(token);
+    context: ({ req }) => {
+      const result = verifyToken(req.headers.token);
 
-        if (result.message === 'jwt expired') {
-          res.clearCookie('user');
-        }
-
-        return { loggedIn: Boolean(result.id), token, userId: result.id, res };
-      } catch (e) {
-        return { error: 'OooOps...something went wrong with the user!', res };
-      }
+      return { loggedIn: Boolean(result.id) };
     },
   });
   await server.start();

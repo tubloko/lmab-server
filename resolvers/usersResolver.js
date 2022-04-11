@@ -1,7 +1,6 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { loginUser, registerUser, getUserByGoogleToken } = require('./../managers/authManager');
 const { getUser, onUserSubscribe, getListUsers } = require('./../managers/userManager');
-const cookie = require('cookie');
 
 module.exports = {
   Query: {
@@ -25,15 +24,8 @@ module.exports = {
     }
   },
   Mutation: {
-    login: async (parent, { email, password }, { res }) => {
+    login: async (parent, { email, password }) => {
       const user = await loginUser({ email, password });
-      res.setHeader(
-        'Set-Cookie',
-        `${cookie.serialize(
-          'user', 
-          JSON.stringify({ token: user.token, id: user.id, nickname: user.nickname }))}; SameSite=None; Secure`,
-        { httpOnly: false, maxAge: 60 * 60 * 24 * 7 }
-      );
 
       return { user };
     },
@@ -49,15 +41,8 @@ module.exports = {
         }
       };
     },
-    register: async (parent, { nickname, firstName, lastName, email, password, googleId, facebookId }, { res }) => {
-      const user = await registerUser({ nickname, firstName, lastName, email, password, googleId, facebookId });
-      res.setHeader(
-        'Set-Cookie',
-        `${cookie.serialize(
-          'user',
-          JSON.stringify({ token: user.token, id: user.id, nickname: user.nickname }))}; SameSite=None; Secure`,
-        { httpOnly: false, maxAge: 60 * 60 * 24 * 7 }
-      );
+    register: async (parent, { name, email, googleId, password }) => {
+      const user = await registerUser({ name, email, password, googleId });
 
       return { user: { ...user, id: user._id } };
     },

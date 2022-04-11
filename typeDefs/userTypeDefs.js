@@ -9,12 +9,9 @@ module.exports = `
   }
   type User {
     id: String
-    nickname: String
-    firstName: String
-    lastName: String
+    name: String
     email: String
     googleId: String
-    facebookId: String
     token: String
     challengeRoomsIds: [String]
   }
@@ -31,7 +28,7 @@ module.exports = `
   type Mutation {
     login(email: String! password: String!): AuthPayload
     signInWithGoogle(accessToken: String!): AuthPayload
-    register(nickname: String! email: String! password: String! googleId: String firstName: String lastName: String): AuthPayload
+    register(name: String! email: String! password: String! googleId: String): AuthPayload
     onSubscribe(id: ID! challengeRoomIds: [String] challengeRoomId: String!): AuthPayload
     logout: Logout
   }

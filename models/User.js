@@ -2,9 +2,10 @@ const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema(
   {
-    nickname: String,
-    firstName: String,
-    lastName: String,
+    name: {
+      type: String,
+      required: true,
+    },
     challengeRoomsIds: [String],
     email: {
       type: String,
@@ -16,7 +17,6 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
     googleId: String,
-    facebookId: String,
   },
   {
     timestamps: true,
