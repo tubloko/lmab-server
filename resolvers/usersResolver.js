@@ -49,9 +49,7 @@ module.exports = {
 
       return { user: { ...user } };
     },
-    logout: async (parent, { id, challengeRoomIds, challengeRoomId }, { res }) => {
-      res.clearCookie('user');
-
+    logout: () => {
       return { success: true };
     },
   },
