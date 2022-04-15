@@ -32,13 +32,19 @@ const registerUser = async ({ googleId, name, password, email }) => {
 
   return { ...user.toJSON(), token };
 }
-const getUserByGoogleToken = async (accessToken) => {
+const registerWithGoogle = async ({ accessToken, password, email, name }) => {
   const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${accessToken}`);
-  return await response.json();
+  const user = response.json();
+
+  if (!user.error) {
+    return registerUser({ googleId: user.id, password, name, email });
+  }
+
+  throw new UserInputError(user.error);
 }
 
 module.exports = {
   loginUser,
   registerUser,
-  getUserByGoogleToken,
+  registerWithGoogle,
 }

@@ -1,5 +1,5 @@
 const { AuthenticationError } = require('apollo-server-express');
-const { loginUser, registerUser, getUserByGoogleToken } = require('./../managers/authManager');
+const { loginUser, registerUser, registerWithGoogle } = require('./../managers/authManager');
 const { getUser, onUserSubscribe, getListUsers } = require('./../managers/userManager');
 
 module.exports = {
@@ -29,15 +29,9 @@ module.exports = {
 
       return { user };
     },
-    signInWithGoogle: async (parent, { accessToken }) => {
-      const user = await getUserByGoogleToken(accessToken);
-      return {
-        user: {
-          name: user.name,
-          email: user.email,
-          googleId: user.sub,
-        }
-      };
+    signUpWithGoogle: async (parent, { accessToken, email, password, name }) => {
+      const user = await registerWithGoogle({ accessToken, email, password, name });
+      return { user };
     },
     register: async (parent, { name, email, googleId, password }) => {
       const user = await registerUser({ name, email, password, googleId });

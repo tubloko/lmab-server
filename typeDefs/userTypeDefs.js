@@ -27,7 +27,7 @@ module.exports = `
   }
   type Mutation {
     login(email: String! password: String!): AuthPayload
-    signInWithGoogle(accessToken: String!): AuthPayload
+    signUpWithGoogle(name: String! email: String! password: String! accessToken: String!): AuthPayload
     register(name: String! email: String! password: String! googleId: String): AuthPayload
     onSubscribe(id: ID! challengeRoomIds: [String] challengeRoomId: String!): AuthPayload
     logout: Logout
